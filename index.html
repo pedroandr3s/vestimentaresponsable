@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de EPP - Seguridad en Obra</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8eaff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #999;
+            font-size: 12px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .preview-container {
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-analyze {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-analyze:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .result.warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .result-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .safety-items {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ Detector de EPP</h1>
+        <p class="subtitle">Verifica que los trabajadores usen casco y chaleco reflectante</p>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">Arrastra una imagen aquí o haz clic para seleccionar</div>
+            <div class="upload-subtext">Formatos: JPG, PNG (Máx. 10MB)</div>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="preview-container" id="previewContainer">
+            <img id="previewImage" class="preview-image" alt="Vista previa">
+        </div>
+
+        <button class="btn-analyze" id="btnAnalyze">Analizar Seguridad</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #667eea;">Analizando imagen...</p>
+        </div>
+
+        <div class="result" id="result">
+            <div class="result-title" id="resultTitle"></div>
+            <div id="resultContent"></div>
+            <button class="btn-reset" onclick="resetForm()">Analizar otra imagen</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURA AQUÍ TU WEBHOOK DE N8N
+        const N8N_WEBHOOK_URL = 'https://tu-instancia-n8n.app.n8n.cloud/webhook/detector-epp';
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const btnAnalyze = document.getElementById('btnAnalyze');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultContent = document.getElementById('resultContent');
+
+        let selectedFile = null;
+
+        // Click en área de carga
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        // Selección de archivo
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona una imagen válida');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('La imagen es muy grande. Máximo 10MB');
+                return;
+            }
+
+            selectedFile = file;
+
+            // Mostrar vista previa
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                btnAnalyze.style.display = 'block';
+                result.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Analizar imagen
+        btnAnalyze.addEventListener('click', analyzeImage);
+
+        async function analyzeImage() {
+            if (!selectedFile) return;
+
+            btnAnalyze.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            try {
+                // Convertir imagen a base64
+                const base64 = await fileToBase64(selectedFile);
+
+                // Enviar a n8n
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image: base64,
+                        filename: selectedFile.name
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al analizar la imagen');
+                }
+
+                const data = await response.json();
+                displayResult(data);
+
+            } catch (error) {
+                console.error('Error:', error);
+                result.className = 'result error';
+                result.style.display = 'block';
+                resultTitle.textContent = '❌ Error';
+                resultContent.textContent = 'Hubo un problema al analizar la imagen. Por favor intenta nuevamente.';
+            } finally {
+                loading.style.display = 'none';
+                btnAnalyze.disabled = false;
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function displayResult(data) {
+            result.style.display = 'block';
+
+            if (data.cumple) {
+                result.className = 'result success';
+                resultTitle.textContent = '✅ Cumple con Seguridad';
+                resultContent.innerHTML = `
+                    <p>${data.mensaje}</p>
+                    <div class="safety-items">
+                        <p>✓ Casco detectado</p>
+                        <p>✓ Chaleco reflectante detectado</p>
+                    </div>
+                `;
+            } else {
+                result.className = 'result warning';
+                resultTitle.textContent = '⚠️ Falta Equipo de Seguridad';
+                resultContent.innerHTML = `
+                    <p><strong>El trabajador NO cumple con los requisitos de seguridad.</strong></p>
+                    <p style="margin-top: 10px;">${data.mensaje}</p>
+                    ${data.falta ? `<div class="safety-items"><p><strong>Le falta:</strong> ${data.falta}</p></div>` : ''}
+                `;
+            }
+        }
+
+        function resetForm() {
+            selectedFile = null;
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            btnAnalyze.style.display = 'none';
+            result.style.display = 'none';
+            uploadArea.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
