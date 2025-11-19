@@ -199,12 +199,33 @@
         .btn-reset:hover {
             background: #5a6268;
         }
+
+        .config-warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .config-warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🏗️ Detector de EPP</h1>
         <p class="subtitle">Verifica que los trabajadores usen casco y chaleco reflectante</p>
+
+        <!-- Advertencia de configuración -->
+        <div class="config-warning" id="configWarning">
+            <strong>⚠️ Configuración requerida:</strong>
+            Debes reemplazar la URL del webhook en el código JavaScript (línea 188)
+        </div>
 
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📷</div>
@@ -232,8 +253,24 @@
     </div>
 
     <script>
-        // CONFIGURA AQUÍ TU WEBHOOK DE N8N
-        const N8N_WEBHOOK_URL = 'https://tu-instancia-n8n.app.n8n.cloud/webhook/detector-epp';
+        // ============================================
+        // 🔧 CONFIGURACIÓN - REEMPLAZA ESTA URL
+        // ============================================
+        // Ve a tu workflow en n8n, haz clic en el webhook
+        // Copia la "Production URL" y pégala aquí:
+        
+        const N8N_WEBHOOK_URL = 'https://naitus.app.n8n.cloud/webhook/detector-epp';
+        
+        // Si tu URL es diferente, reemplázala arriba ☝️
+        // Ejemplo: 'https://naitus.app.n8n.cloud/webhook-test/abc123/detector-epp'
+        // ============================================
+
+        // Verificar si la URL está configurada
+        if (N8N_WEBHOOK_URL.includes('tu-instancia')) {
+            console.error('❌ ERROR: Debes configurar la URL del webhook de n8n');
+        } else {
+            document.getElementById('configWarning').style.display = 'none';
+        }
 
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -317,6 +354,8 @@
                 // Convertir imagen a base64
                 const base64 = await fileToBase64(selectedFile);
 
+                console.log('📤 Enviando a n8n:', N8N_WEBHOOK_URL);
+
                 // Enviar a n8n
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
@@ -329,19 +368,33 @@
                     })
                 });
 
+                console.log('📥 Respuesta recibida:', response.status);
+
                 if (!response.ok) {
-                    throw new Error('Error al analizar la imagen');
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
 
                 const data = await response.json();
+                console.log('✅ Datos:', data);
                 displayResult(data);
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error completo:', error);
                 result.className = 'result error';
                 result.style.display = 'block';
-                resultTitle.textContent = '❌ Error';
-                resultContent.textContent = 'Hubo un problema al analizar la imagen. Por favor intenta nuevamente.';
+                resultTitle.textContent = '❌ Error de Conexión';
+                resultContent.innerHTML = `
+                    <p><strong>No se pudo conectar con el servidor.</strong></p>
+                    <p style="margin-top: 10px; font-size: 14px;">
+                        Error: ${error.message}
+                    </p>
+                    <p style="margin-top: 10px; font-size: 13px; color: #666;">
+                        <strong>Posibles causas:</strong><br>
+                        • El workflow no está activado en n8n<br>
+                        • La URL del webhook es incorrecta<br>
+                        • Problemas de CORS (verifica headers en n8n)
+                    </p>
+                `;
             } finally {
                 loading.style.display = 'none';
                 btnAnalyze.disabled = false;
