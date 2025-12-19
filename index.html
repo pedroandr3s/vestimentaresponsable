@@ -377,13 +377,9 @@
 
         let selectedFile = null;
 
-        // Click en área de carga
         uploadArea.addEventListener('click', () => fileInput.click());
-
-        // Selección de archivo
         fileInput.addEventListener('change', handleFileSelect);
 
-        // Drag and drop
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('dragover');
@@ -396,16 +392,14 @@
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
             }
         });
 
         function handleFileSelect(e) {
-            const files = e.target.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
             }
         }
 
@@ -435,7 +429,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Analizar imagen
         btnAnalyze.addEventListener('click', analyzeImage);
 
         async function analyzeImage() {
@@ -463,7 +456,10 @@
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
 
-                const data = await response.json();
+                const text = await response.text();
+                
+                // Procesar respuesta de Gemini
+                const data = parseGeminiResponse(text);
                 displayResult(data);
 
             } catch (error) {
@@ -471,6 +467,39 @@
                 showError('Error de conexión', `No se pudo conectar con el servidor. ${error.message}`);
             } finally {
                 loading.style.display = 'none';
+            }
+        }
+
+        function parseGeminiResponse(text) {
+            try {
+                // Limpiar markdown si existe
+                let clean = text.trim();
+                if (clean.startsWith('```json')) {
+                    clean = clean.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+                } else if (clean.startsWith('```')) {
+                    clean = clean.replace(/```\n?/g, '');
+                }
+                
+                // Limpiar comillas extras si vienen como string escapado
+                if (clean.startsWith('"') && clean.endsWith('"')) {
+                    clean = clean.slice(1, -1).replace(/\\n/g, '').replace(/\\"/g, '"');
+                }
+                
+                // Parsear JSON
+                const parsed = JSON.parse(clean);
+                
+                return {
+                    tiene_casco: parsed.tiene_casco || false,
+                    tiene_chaleco: parsed.tiene_chaleco || false,
+                    descripcion: parsed.descripcion || 'Sin descripción'
+                };
+            } catch (e) {
+                console.error('Error parseando:', e, text);
+                return {
+                    tiene_casco: false,
+                    tiene_chaleco: false,
+                    descripcion: 'Error al procesar la respuesta'
+                };
             }
         }
 
@@ -485,8 +514,10 @@
 
         function displayResult(data) {
             result.style.display = 'block';
+            
+            const cumple = data.tiene_casco && data.tiene_chaleco;
 
-            if (data.cumple) {
+            if (cumple) {
                 result.className = 'result success';
                 resultIcon.textContent = '✅';
                 resultTitle.textContent = 'Cumple con Seguridad';
@@ -501,7 +532,7 @@
                             <span>Chaleco reflectante detectado</span>
                         </div>
                     </div>
-                    ${data.descripcion_detallada ? `<div class="description-box">"${data.descripcion_detallada}"</div>` : ''}
+                    <div class="description-box">"${data.descripcion}"</div>
                 `;
             } else {
                 result.className = 'result warning';
@@ -540,8 +571,7 @@
                 
                 itemsHtml += '</div>';
                 
-                resultContent.innerHTML = itemsHtml + 
-                    (data.descripcion_detallada ? `<div class="description-box">"${data.descripcion_detallada}"</div>` : '');
+                resultContent.innerHTML = itemsHtml + `<div class="description-box">"${data.descripcion}"</div>`;
             }
         }
 
@@ -566,4 +596,3 @@
     </script>
 </body>
 </html>
-
