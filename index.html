@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,65 +22,74 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
             padding: 40px;
-            max-width: 600px;
+            max-width: 550px;
             width: 100%;
         }
 
-        h1 {
-            color: #333;
+        .header {
             text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-icon {
+            font-size: 56px;
             margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #1a1a2e;
             font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .subtitle {
-            text-align: center;
             color: #666;
-            margin-bottom: 30px;
             font-size: 14px;
         }
 
         .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px;
+            border: 3px dashed #0f3460;
+            border-radius: 16px;
+            padding: 40px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: #f8f9ff;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecf4 100%);
             margin-bottom: 20px;
         }
 
         .upload-area:hover {
-            border-color: #764ba2;
-            background: #f0f2ff;
+            border-color: #e94560;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+            transform: translateY(-2px);
         }
 
         .upload-area.dragover {
-            border-color: #764ba2;
-            background: #e8eaff;
+            border-color: #e94560;
+            background: linear-gradient(135deg, #ffe8ec 0%, #ffd6de 100%);
             transform: scale(1.02);
         }
 
         .upload-icon {
-            font-size: 48px;
-            color: #667eea;
+            font-size: 52px;
             margin-bottom: 15px;
         }
 
         .upload-text {
-            color: #555;
+            color: #333;
             font-size: 16px;
-            margin-bottom: 10px;
+            font-weight: 500;
+            margin-bottom: 8px;
         }
 
         .upload-subtext {
-            color: #999;
-            font-size: 12px;
+            color: #888;
+            font-size: 13px;
         }
 
         input[type="file"] {
@@ -93,52 +102,84 @@
             display: none;
         }
 
+        .preview-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
         .preview-image {
             max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-height: 280px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-remove {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e94560;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(233, 69, 96, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .btn-remove:hover {
+            background: #c73e54;
+            transform: scale(1.1);
         }
 
         .btn-analyze {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 16px 40px;
             font-size: 16px;
+            font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
             width: 100%;
-            font-weight: bold;
             transition: all 0.3s ease;
             display: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-analyze:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(233, 69, 96, 0.4);
         }
 
         .btn-analyze:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .loading {
             display: none;
             text-align: center;
-            margin: 20px 0;
+            padding: 30px;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e8ecf4;
+            border-top: 4px solid #e94560;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
         }
 
         @keyframes spin {
@@ -146,131 +187,182 @@
             100% { transform: rotate(360deg); }
         }
 
+        .loading-text {
+            color: #0f3460;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
         .result {
             display: none;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: 16px;
             margin-top: 20px;
-            font-size: 16px;
-            line-height: 1.6;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .result.success {
-            background: #d4edda;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
             border: 2px solid #28a745;
-            color: #155724;
         }
 
         .result.warning {
-            background: #fff3cd;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
             border: 2px solid #ffc107;
-            color: #856404;
         }
 
         .result.error {
-            background: #f8d7da;
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
             border: 2px solid #dc3545;
-            color: #721c24;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .result-icon {
+            font-size: 36px;
         }
 
         .result-title {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 20px;
         }
 
+        .result.success .result-title { color: #155724; }
+        .result.warning .result-title { color: #856404; }
+        .result.error .result-title { color: #721c24; }
+
+        .result-content {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .result.success .result-content { color: #155724; }
+        .result.warning .result-content { color: #856404; }
+        .result.error .result-content { color: #721c24; }
+
         .safety-items {
-            margin-top: 10px;
-            padding-left: 20px;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .safety-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .safety-item.ok {
+            background: rgba(40, 167, 69, 0.15);
+            color: #155724;
+        }
+
+        .safety-item.missing {
+            background: rgba(220, 53, 69, 0.15);
+            color: #721c24;
+        }
+
+        .safety-item-icon {
+            font-size: 20px;
+        }
+
+        .description-box {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            font-size: 14px;
+            font-style: italic;
         }
 
         .btn-reset {
             background: #6c757d;
             color: white;
             border: none;
-            padding: 10px 30px;
+            padding: 12px 30px;
             border-radius: 50px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 14px;
+            font-weight: 500;
             transition: all 0.3s ease;
+            width: 100%;
         }
 
         .btn-reset:hover {
             background: #5a6268;
+            transform: translateY(-2px);
         }
 
-        .config-warning {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #856404;
-            font-size: 14px;
-        }
-
-        .config-warning strong {
-            display: block;
-            margin-bottom: 5px;
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e8ecf4;
+            color: #888;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏗️ Detector de EPP</h1>
-        <p class="subtitle">Verifica que los trabajadores usen casco y chaleco reflectante</p>
-
-        <!-- Advertencia de configuración -->
-        <div class="config-warning" id="configWarning">
-            <strong>⚠️ Configuración requerida:</strong>
-            Debes reemplazar la URL del webhook en el código JavaScript (línea 188)
+        <div class="header">
+            <div class="header-icon">🏗️</div>
+            <h1>Detector de EPP</h1>
+            <p class="subtitle">Verifica el uso de casco y chaleco reflectante</p>
         </div>
 
         <div class="upload-area" id="uploadArea">
             <div class="upload-icon">📷</div>
-            <div class="upload-text">Arrastra una imagen aquí o haz clic para seleccionar</div>
-            <div class="upload-subtext">Formatos: JPG, PNG (Máx. 10MB)</div>
-            <input type="file" id="fileInput" accept="image/*">
+            <div class="upload-text">Arrastra una imagen o haz clic para seleccionar</div>
+            <div class="upload-subtext">JPG, PNG, WebP • Máximo 10MB</div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif">
         </div>
 
         <div class="preview-container" id="previewContainer">
-            <img id="previewImage" class="preview-image" alt="Vista previa">
+            <div class="preview-wrapper">
+                <img id="previewImage" class="preview-image" alt="Vista previa">
+                <button class="btn-remove" onclick="resetForm()" title="Quitar imagen">✕</button>
+            </div>
         </div>
 
-        <button class="btn-analyze" id="btnAnalyze">Analizar Seguridad</button>
+        <button class="btn-analyze" id="btnAnalyze">🔍 Analizar Seguridad</button>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p style="margin-top: 10px; color: #667eea;">Analizando imagen...</p>
+            <p class="loading-text">Analizando imagen con IA...</p>
         </div>
 
         <div class="result" id="result">
-            <div class="result-title" id="resultTitle"></div>
-            <div id="resultContent"></div>
-            <button class="btn-reset" onclick="resetForm()">Analizar otra imagen</button>
+            <div class="result-header">
+                <span class="result-icon" id="resultIcon"></span>
+                <span class="result-title" id="resultTitle"></span>
+            </div>
+            <div class="result-content" id="resultContent"></div>
+            <button class="btn-reset" onclick="resetForm()">📷 Analizar otra imagen</button>
+        </div>
+
+        <div class="footer">
+            Powered by Gemini Vision AI • Naitus
         </div>
     </div>
 
     <script>
-        // ============================================
-        // 🔧 CONFIGURACIÓN - REEMPLAZA ESTA URL
-        // ============================================
-        // Ve a tu workflow en n8n, haz clic en el webhook
-        // Copia la "Production URL" y pégala aquí:
-        
-        const N8N_WEBHOOK_URL = 'https://naitus.app.n8n.cloud/webhook/detector-epp';
-        
-        // Si tu URL es diferente, reemplázala arriba ☝️
-        // Ejemplo: 'https://naitus.app.n8n.cloud/webhook-test/abc123/detector-epp'
-        // ============================================
-
-        // Verificar si la URL está configurada
-        if (N8N_WEBHOOK_URL.includes('tu-instancia')) {
-            console.error('❌ ERROR: Debes configurar la URL del webhook de n8n');
-        } else {
-            document.getElementById('configWarning').style.display = 'none';
-        }
+        const WEBHOOK_URL = 'https://naitus.app.n8n.cloud/webhook/detector-epp';
 
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -279,6 +371,7 @@
         const btnAnalyze = document.getElementById('btnAnalyze');
         const loading = document.getElementById('loading');
         const result = document.getElementById('result');
+        const resultIcon = document.getElementById('resultIcon');
         const resultTitle = document.getElementById('resultTitle');
         const resultContent = document.getElementById('resultContent');
 
@@ -317,23 +410,25 @@
         }
 
         function handleFile(file) {
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor selecciona una imagen válida');
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            
+            if (!validTypes.includes(file.type)) {
+                showError('Formato no soportado', 'Por favor usa JPG, PNG, WebP o GIF');
                 return;
             }
 
             if (file.size > 10 * 1024 * 1024) {
-                alert('La imagen es muy grande. Máximo 10MB');
+                showError('Archivo muy grande', 'La imagen debe ser menor a 10MB');
                 return;
             }
 
             selectedFile = file;
 
-            // Mostrar vista previa
             const reader = new FileReader();
             reader.onload = (e) => {
                 previewImage.src = e.target.result;
                 previewContainer.style.display = 'block';
+                uploadArea.style.display = 'none';
                 btnAnalyze.style.display = 'block';
                 result.style.display = 'none';
             };
@@ -346,18 +441,14 @@
         async function analyzeImage() {
             if (!selectedFile) return;
 
-            btnAnalyze.disabled = true;
+            btnAnalyze.style.display = 'none';
             loading.style.display = 'block';
             result.style.display = 'none';
 
             try {
-                // Convertir imagen a base64
                 const base64 = await fileToBase64(selectedFile);
 
-                console.log('📤 Enviando a n8n:', N8N_WEBHOOK_URL);
-
-                // Enviar a n8n
-                const response = await fetch(N8N_WEBHOOK_URL, {
+                const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -368,36 +459,18 @@
                     })
                 });
 
-                console.log('📥 Respuesta recibida:', response.status);
-
                 if (!response.ok) {
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
 
                 const data = await response.json();
-                console.log('✅ Datos:', data);
                 displayResult(data);
 
             } catch (error) {
-                console.error('❌ Error completo:', error);
-                result.className = 'result error';
-                result.style.display = 'block';
-                resultTitle.textContent = '❌ Error de Conexión';
-                resultContent.innerHTML = `
-                    <p><strong>No se pudo conectar con el servidor.</strong></p>
-                    <p style="margin-top: 10px; font-size: 14px;">
-                        Error: ${error.message}
-                    </p>
-                    <p style="margin-top: 10px; font-size: 13px; color: #666;">
-                        <strong>Posibles causas:</strong><br>
-                        • El workflow no está activado en n8n<br>
-                        • La URL del webhook es incorrecta<br>
-                        • Problemas de CORS (verifica headers en n8n)
-                    </p>
-                `;
+                console.error('Error:', error);
+                showError('Error de conexión', `No se pudo conectar con el servidor. ${error.message}`);
             } finally {
                 loading.style.display = 'none';
-                btnAnalyze.disabled = false;
             }
         }
 
@@ -415,23 +488,71 @@
 
             if (data.cumple) {
                 result.className = 'result success';
-                resultTitle.textContent = '✅ Cumple con Seguridad';
+                resultIcon.textContent = '✅';
+                resultTitle.textContent = 'Cumple con Seguridad';
                 resultContent.innerHTML = `
-                    <p>${data.mensaje}</p>
                     <div class="safety-items">
-                        <p>✓ Casco detectado</p>
-                        <p>✓ Chaleco reflectante detectado</p>
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🪖</span>
+                            <span>Casco de seguridad detectado</span>
+                        </div>
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🦺</span>
+                            <span>Chaleco reflectante detectado</span>
+                        </div>
                     </div>
+                    ${data.descripcion_detallada ? `<div class="description-box">"${data.descripcion_detallada}"</div>` : ''}
                 `;
             } else {
                 result.className = 'result warning';
-                resultTitle.textContent = '⚠️ Falta Equipo de Seguridad';
-                resultContent.innerHTML = `
-                    <p><strong>El trabajador NO cumple con los requisitos de seguridad.</strong></p>
-                    <p style="margin-top: 10px;">${data.mensaje}</p>
-                    ${data.falta ? `<div class="safety-items"><p><strong>Le falta:</strong> ${data.falta}</p></div>` : ''}
-                `;
+                resultIcon.textContent = '⚠️';
+                resultTitle.textContent = 'Equipo Incompleto';
+                
+                let itemsHtml = '<div class="safety-items">';
+                
+                if (data.tiene_casco) {
+                    itemsHtml += `
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🪖</span>
+                            <span>Casco de seguridad detectado</span>
+                        </div>`;
+                } else {
+                    itemsHtml += `
+                        <div class="safety-item missing">
+                            <span class="safety-item-icon">❌</span>
+                            <span>Falta casco de seguridad</span>
+                        </div>`;
+                }
+                
+                if (data.tiene_chaleco) {
+                    itemsHtml += `
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🦺</span>
+                            <span>Chaleco reflectante detectado</span>
+                        </div>`;
+                } else {
+                    itemsHtml += `
+                        <div class="safety-item missing">
+                            <span class="safety-item-icon">❌</span>
+                            <span>Falta chaleco reflectante</span>
+                        </div>`;
+                }
+                
+                itemsHtml += '</div>';
+                
+                resultContent.innerHTML = itemsHtml + 
+                    (data.descripcion_detallada ? `<div class="description-box">"${data.descripcion_detallada}"</div>` : '');
             }
+        }
+
+        function showError(title, message) {
+            result.style.display = 'block';
+            result.className = 'result error';
+            resultIcon.textContent = '❌';
+            resultTitle.textContent = title;
+            resultContent.innerHTML = `<p>${message}</p>`;
+            loading.style.display = 'none';
+            btnAnalyze.style.display = 'block';
         }
 
         function resetForm() {
@@ -445,5 +566,3 @@
     </script>
 </body>
 </html>
-
-
