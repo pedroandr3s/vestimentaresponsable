@@ -456,10 +456,11 @@
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
 
-                const text = await response.text();
+                const jsonResponse = await response.json();
+                console.log('Respuesta completa:', jsonResponse);
                 
                 // Procesar respuesta de Gemini
-                const data = parseGeminiResponse(text);
+                const data = parseGeminiResponse(jsonResponse);
                 displayResult(data);
 
             } catch (error) {
@@ -470,8 +471,16 @@
             }
         }
 
-        function parseGeminiResponse(text) {
+        function parseGeminiResponse(jsonResponse) {
             try {
+                // La respuesta viene como array, tomamos el primer elemento
+                let geminiData = Array.isArray(jsonResponse) ? jsonResponse[0] : jsonResponse;
+                
+                // Extraer el texto de la respuesta de Gemini
+                let text = geminiData.candidates[0].content.parts[0].text;
+                
+                console.log('Texto extraído:', text);
+                
                 // Limpiar markdown si existe
                 let clean = text.trim();
                 if (clean.startsWith('```json')) {
@@ -480,10 +489,8 @@
                     clean = clean.replace(/```\n?/g, '');
                 }
                 
-                // Limpiar comillas extras si vienen como string escapado
-                if (clean.startsWith('"') && clean.endsWith('"')) {
-                    clean = clean.slice(1, -1).replace(/\\n/g, '').replace(/\\"/g, '"');
-                }
+                clean = clean.trim();
+                console.log('JSON limpio:', clean);
                 
                 // Parsear JSON
                 const parsed = JSON.parse(clean);
@@ -494,7 +501,7 @@
                     descripcion: parsed.descripcion || 'Sin descripción'
                 };
             } catch (e) {
-                console.error('Error parseando:', e, text);
+                console.error('Error parseando:', e);
                 return {
                     tiene_casco: false,
                     tiene_chaleco: false,
