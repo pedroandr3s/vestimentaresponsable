@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detector de EPP - Gemini Vision</title>
+    <title>Análisis de Riesgos en Obra - Seguridad Laboral</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,205 +22,164 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
             padding: 40px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
+        .header {
             text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-icon {
+            font-size: 56px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #1a1a2e;
             font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .subtitle {
-            text-align: center;
             color: #666;
-            margin-bottom: 30px;
             font-size: 14px;
         }
 
         .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px;
+            border: 3px dashed #0f3460;
+            border-radius: 16px;
+            padding: 40px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ecf4 100%);
             margin-bottom: 20px;
         }
 
         .upload-area:hover {
-            border-color: #764ba2;
-            background-color: #f8f9ff;
+            border-color: #e94560;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe8ec 100%);
+            transform: translateY(-2px);
         }
 
         .upload-area.dragover {
-            background-color: #e8ecff;
-            border-color: #764ba2;
+            border-color: #e94560;
+            background: linear-gradient(135deg, #ffe8ec 0%, #ffd6de 100%);
+            transform: scale(1.02);
         }
 
         .upload-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 52px;
+            margin-bottom: 15px;
         }
 
         .upload-text {
-            color: #666;
+            color: #333;
             font-size: 16px;
-            margin-bottom: 10px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: #888;
+            font-size: 13px;
         }
 
         input[type="file"] {
             display: none;
         }
 
-        .preview {
+        .preview-container {
             margin: 20px 0;
             text-align: center;
             display: none;
         }
 
-        .preview img {
+        .preview-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .preview-image {
             max-width: 100%;
-            max-height: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-height: 280px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
-        .filename {
-            color: #667eea;
-            font-weight: bold;
-            margin-top: 10px;
-            word-break: break-all;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-remove {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #e94560;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            margin-top: 20px;
-        }
-
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .result {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .result.success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border-left: 5px solid #28a745;
-        }
-
-        .result.warning {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
-            border-left: 5px solid #ffc107;
-        }
-
-        .result-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .result-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .result-message {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .result-details {
-            background: rgba(255, 255, 255, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .result-item {
+            font-size: 18px;
             display: flex;
             align-items: center;
-            margin: 8px 0;
-            font-size: 14px;
+            justify-content: center;
+            box-shadow: 0 3px 10px rgba(233, 69, 96, 0.4);
+            transition: all 0.2s ease;
         }
 
-        .result-item .icon {
-            margin-right: 10px;
-            font-size: 20px;
+        .btn-remove:hover {
+            background: #c73e54;
+            transform: scale(1.1);
         }
 
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
+        .btn-analyze {
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
             display: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .status.loading {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .btn-analyze:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(233, 69, 96, 0.4);
         }
 
-        .status.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .btn-analyze:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e8ecf4;
+            border-top: 4px solid #e94560;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 10px;
-            vertical-align: middle;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
         }
 
         @keyframes spin {
@@ -228,355 +187,604 @@
             100% { transform: rotate(360deg); }
         }
 
-        .timestamp {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            margin-top: 10px;
+        .loading-text {
+            color: #0f3460;
+            font-size: 15px;
+            font-weight: 500;
         }
 
-        .api-key-notice {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            padding: 15px;
+        .result {
+            display: none;
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+        }
+
+        .result.warning {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border: 2px solid #ffc107;
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .result-icon {
+            font-size: 36px;
+        }
+
+        .result-title {
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .result.success .result-title { color: #155724; }
+        .result.warning .result-title { color: #856404; }
+        .result.error .result-title { color: #721c24; }
+
+        .result-content {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .result.success .result-content { color: #155724; }
+        .result.warning .result-content { color: #856404; }
+        .result.error .result-content { color: #721c24; }
+
+        .safety-items {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .safety-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
             border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #856404;
+            font-weight: 500;
         }
 
-        .api-key-notice strong {
+        .safety-item.ok {
+            background: rgba(40, 167, 69, 0.15);
+            color: #155724;
+        }
+
+        .safety-item.missing {
+            background: rgba(220, 53, 69, 0.15);
+            color: #721c24;
+        }
+
+        .safety-item-icon {
+            font-size: 20px;
+        }
+
+        .description-box {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
             display: block;
-            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .risk-item {
+            display: flex;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .risk-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .risk-badge.critico {
+            background: #dc3545;
+            color: white;
+        }
+
+        .risk-badge.alto {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .risk-badge.medio {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .risk-badge.bajo {
+            background: #90CAF9;
+            color: #1565C0;
+        }
+
+        .recommendations-list {
+            margin-top: 15px;
+        }
+
+        .recommendation-item {
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .section-title {
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-reset:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e8ecf4;
+            color: #888;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔍 Detector de EPP</h1>
-        <div class="subtitle">Análisis automático con Gemini Vision AI</div>
+        <div class="header">
+            <div class="header-icon">🏗️</div>
+            <h1>Análisis de Riesgos en Obra</h1>
+            <p class="subtitle">Detección inteligente de riesgos y EPP con IA</p>
+        </div>
 
         <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📸</div>
-            <div class="upload-text">Haz clic o arrastra una imagen aquí</div>
-            <div style="font-size: 12px; color: #999; margin-top: 5px;">
-                Se verificará: Casco de seguridad y Chaleco reflectante
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">Arrastra una imagen o haz clic para seleccionar</div>
+            <div class="upload-subtext">JPG, PNG, WebP • Máximo 10MB</div>
+            <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif">
+        </div>
+
+        <div class="preview-container" id="previewContainer">
+            <div class="preview-wrapper">
+                <img id="previewImage" class="preview-image" alt="Vista previa">
+                <button class="btn-remove" onclick="resetForm()" title="Quitar imagen">✕</button>
             </div>
-            <input type="file" id="fileInput" accept="image/*">
         </div>
 
-        <div class="preview" id="preview">
-            <img id="previewImg" src="" alt="Vista previa">
-            <div class="filename" id="filename"></div>
+        <button class="btn-analyze" id="btnAnalyze">🔍 Analizar Seguridad</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p class="loading-text">Analizando imagen con IA...</p>
         </div>
 
-        <button id="analyzeBtn" disabled>Analizar EPP</button>
+        <div class="result" id="result">
+            <div class="result-header">
+                <span class="result-icon" id="resultIcon"></span>
+                <span class="result-title" id="resultTitle"></span>
+            </div>
+            <div class="result-content" id="resultContent"></div>
+            <button class="btn-reset" onclick="resetForm()">📷 Analizar otra imagen</button>
+        </div>
 
-        <div class="status" id="status"></div>
-        <div class="result" id="result"></div>
+        <div class="footer">
+            Powered by Gemini Vision AI • Naitus
+        </div>
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN: API KEY DE GEMINI
-        // ============================================
-        const GEMINI_API_KEY = 'AIzaSyBuFjBcMx0Giik5oZka--0PWwR_IIHj1AU';
-        // ============================================
+        const WEBHOOK_URL = 'https://naitus.app.n8n.cloud/webhook/6f7b288e-1efe-4504-a6fd-660931327269';
 
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
-        const preview = document.getElementById('preview');
-        const previewImg = document.getElementById('previewImg');
-        const filename = document.getElementById('filename');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const status = document.getElementById('status');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const btnAnalyze = document.getElementById('btnAnalyze');
+        const loading = document.getElementById('loading');
         const result = document.getElementById('result');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultContent = document.getElementById('resultContent');
 
         let selectedFile = null;
-        let base64Data = null;
 
-        // Click para seleccionar archivo
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
 
-        // Prevenir comportamiento por defecto del drag
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
+        uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
-            e.stopPropagation();
-        }
-
-        // Efectos visuales para drag and drop
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, () => {
-                uploadArea.classList.add('dragover');
-            });
+            uploadArea.classList.add('dragover');
         });
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, () => {
-                uploadArea.classList.remove('dragover');
-            });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
         });
 
-        // Manejar drop
         uploadArea.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
             }
         });
 
-        // Manejar selección de archivo
-        fileInput.addEventListener('change', (e) => {
+        function handleFileSelect(e) {
             if (e.target.files.length > 0) {
                 handleFile(e.target.files[0]);
             }
-        });
+        }
 
         function handleFile(file) {
-            if (!file.type.startsWith('image/')) {
-                showStatus('Por favor selecciona una imagen válida', 'error');
+            const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            
+            if (!validTypes.includes(file.type)) {
+                showError('Formato no soportado', 'Por favor usa JPG, PNG, WebP o GIF');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                showError('Archivo muy grande', 'La imagen debe ser menor a 10MB');
                 return;
             }
 
             selectedFile = file;
 
-            // Mostrar preview
             const reader = new FileReader();
             reader.onload = (e) => {
-                previewImg.src = e.target.result;
-                preview.style.display = 'block';
-                filename.textContent = file.name;
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+                uploadArea.style.display = 'none';
+                btnAnalyze.style.display = 'block';
+                result.style.display = 'none';
             };
             reader.readAsDataURL(file);
-
-            // Convertir a base64 (sin el prefijo data:image)
-            const base64Reader = new FileReader();
-            base64Reader.onload = (e) => {
-                base64Data = e.target.result.split(',')[1];
-                analyzeBtn.disabled = false;
-            };
-            base64Reader.readAsDataURL(file);
-
-            hideStatus();
-            hideResult();
         }
 
-        // Analizar imagen con Gemini
-        analyzeBtn.addEventListener('click', async () => {
-            if (!base64Data || !selectedFile) {
-                showStatus('❌ No hay imagen seleccionada', 'error');
-                return;
-            }
+        btnAnalyze.addEventListener('click', analyzeImage);
 
-            if (GEMINI_API_KEY === 'TU_API_KEY_AQUI') {
-                showStatus('❌ Error: Debes configurar tu API Key de Gemini en el código', 'error');
-                console.error('CONFIGURACIÓN REQUERIDA: Edita el HTML y coloca tu API Key en la línea 290');
-                return;
-            }
+        async function analyzeImage() {
+            if (!selectedFile) return;
 
-            analyzeBtn.disabled = true;
-            showStatus('🔍 Analizando imagen con Gemini Vision AI...', 'loading');
-            hideResult();
-
-            console.log('�� Iniciando análisis...');
-            console.log('📁 Archivo:', selectedFile.name);
-            console.log('📏 Tamaño base64:', base64Data.length, 'caracteres');
+            btnAnalyze.style.display = 'none';
+            loading.style.display = 'block';
+            result.style.display = 'none';
 
             try {
-                // Paso 1: Llamar a Gemini Vision API
-                const geminiResponse = await callGeminiAPI(base64Data);
-                console.log('✅ Respuesta de Gemini recibida:', geminiResponse);
+                const base64 = await fileToBase64(selectedFile);
 
-                // Paso 2: Procesar resultado
-                const processedResult = processGeminiResponse(geminiResponse);
-                console.log('✅ Resultado procesado:', processedResult);
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image: base64,
+                        filename: selectedFile.name
+                    })
+                });
 
-                // Paso 3: Mostrar resultado
-                displayResult(processedResult);
-                hideStatus();
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const jsonResponse = await response.json();
+                console.log('Respuesta:', jsonResponse);
+                
+                // Procesar respuesta
+                const data = parseResponse(jsonResponse);
+                displayResult(data);
 
             } catch (error) {
-                console.error('❌ Error:', error);
-                showStatus(`❌ Error: ${error.message}`, 'error');
+                console.error('Error:', error);
+                showError('Error de conexión', `No se pudo conectar con el servidor. ${error.message}`);
             } finally {
-                analyzeBtn.disabled = false;
+                loading.style.display = 'none';
             }
-        });
-
-        async function callGeminiAPI(imageBase64) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
-
-            const requestBody = {
-                contents: [
-                    {
-                        parts: [
-                            {
-                                text: `Eres un inspector de seguridad en obras de construcción. Analiza esta imagen y determina si el trabajador está usando:
-
-1. CASCO de seguridad (cualquier tipo de casco protector en la cabeza)
-2. CHALECO REFLECTANTE (chaleco de alta visibilidad, usualmente amarillo, naranja o verde con franjas reflectantes)
-
-Responde ÚNICAMENTE en formato JSON con esta estructura exacta, sin markdown ni texto adicional:
-{"tiene_casco": true, "tiene_chaleco": false, "descripcion": "descripcion breve"}
-
-Sé muy específico y objetivo. Si no estás seguro de algo, márcalo como false.`
-                            },
-                            {
-                                inline_data: {
-                                    mime_type: "image/jpeg",
-                                    data: imageBase64
-                                }
-                            }
-                        ]
-                    }
-                ],
-                generationConfig: {
-                    temperature: 0.1,
-                    maxOutputTokens: 500
-                }
-            };
-
-            console.log('🌐 Llamando a Gemini API...');
-            const startTime = Date.now();
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            const responseTime = Date.now() - startTime;
-            console.log(`⏱️ Tiempo de respuesta de Gemini: ${responseTime}ms`);
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error('Error de Gemini API:', errorData);
-                throw new Error(`Error de Gemini API: ${errorData.error?.message || response.statusText}`);
-            }
-
-            const data = await response.json();
-            return data;
         }
 
-        function processGeminiResponse(geminiResponse) {
-            // Extraer la respuesta de Gemini
-            const geminiText = geminiResponse.candidates[0].content.parts[0].text;
-            console.log('📝 Texto de Gemini:', geminiText);
-
-            // Limpiar posibles markdown code blocks
-            let jsonString = geminiText.trim();
-            if (jsonString.startsWith('```json')) {
-                jsonString = jsonString.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-            } else if (jsonString.startsWith('```')) {
-                jsonString = jsonString.replace(/```\n?/g, '');
-            }
-
-            // Parsear el JSON
-            let analisis;
+        function parseResponse(jsonResponse) {
             try {
-                analisis = JSON.parse(jsonString);
+                let data = Array.isArray(jsonResponse) ? jsonResponse[0] : jsonResponse;
+
+                if (data.reporte) {
+                    return data.reporte;
+                }
+
+                return {
+                    tiene_casco: data.tiene_casco || false,
+                    tiene_chaleco: data.tiene_chaleco || false,
+                    descripcion: data.descripcion_detallada || data.descripcion || 'Sin descripción'
+                };
             } catch (e) {
-                console.warn('⚠️ Error parseando JSON, intentando extracción manual:', e);
-                // Si falla el parseo, intentar extraer valores manualmente
-                analisis = {
-                    tiene_casco: jsonString.toLowerCase().includes('"tiene_casco": true') ||
-                                 jsonString.toLowerCase().includes('"tiene_casco":true'),
-                    tiene_chaleco: jsonString.toLowerCase().includes('"tiene_chaleco": true') ||
-                                   jsonString.toLowerCase().includes('"tiene_chaleco":true'),
-                    descripcion: 'No se pudo procesar la descripción correctamente'
+                console.error('Error parseando:', e);
+                return {
+                    error: true,
+                    descripcion: 'Error al procesar la respuesta'
                 };
             }
+        }
 
-            // Determinar cumplimiento
-            const cumple = analisis.tiene_casco && analisis.tiene_chaleco;
-
-            // Crear mensaje personalizado
-            let mensaje = '';
-            let falta = '';
-
-            if (cumple) {
-                mensaje = '✅ El trabajador cumple con todos los requisitos de seguridad. Se observa uso correcto de casco y chaleco reflectante.';
-            } else {
-                const faltantes = [];
-
-                if (!analisis.tiene_casco) {
-                    faltantes.push('casco de seguridad');
-                }
-
-                if (!analisis.tiene_chaleco) {
-                    faltantes.push('chaleco reflectante');
-                }
-
-                falta = faltantes.join(' y ');
-                mensaje = `⚠️ Se detectaron ${faltantes.length} elemento(s) de protección faltante(s). ${analisis.descripcion}`;
-            }
-
-            return {
-                cumple: cumple,
-                tiene_casco: analisis.tiene_casco,
-                tiene_chaleco: analisis.tiene_chaleco,
-                mensaje: mensaje,
-                falta: falta,
-                descripcion_detallada: analisis.descripcion,
-                timestamp: new Date().toISOString()
-            };
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
         }
 
         function displayResult(data) {
-            const resultClass = data.cumple ? 'success' : 'warning';
-            const icon = data.cumple ? '✅' : '⚠️';
-            const title = data.cumple ? '¡Cumplimiento Total!' : '¡Atención Requerida!';
-
-            result.className = `result ${resultClass}`;
-            result.innerHTML = `
-                <div class="result-icon">${icon}</div>
-                <div class="result-title">${title}</div>
-                <div class="result-message">${data.mensaje}</div>
-                <div class="result-details">
-                    <div class="result-item">
-                        <span class="icon">${data.tiene_casco ? '✅' : '❌'}</span>
-                        <span>Casco de seguridad: <strong>${data.tiene_casco ? 'SÍ' : 'NO'}</strong></span>
-                    </div>
-                    <div class="result-item">
-                        <span class="icon">${data.tiene_chaleco ? '✅' : '❌'}</span>
-                        <span>Chaleco reflectante: <strong>${data.tiene_chaleco ? 'SÍ' : 'NO'}</strong></span>
-                    </div>
-                    ${!data.cumple ? `
-                    <div class="result-item" style="margin-top: 10px; color: #d9534f;">
-                        <span class="icon">⚠️</span>
-                        <span><strong>Falta:</strong> ${data.falta}</span>
-                    </div>
-                    ` : ''}
-                </div>
-                <div class="timestamp">Análisis realizado: ${new Date(data.timestamp).toLocaleString('es-ES')}</div>
-            `;
             result.style.display = 'block';
-        }
 
-        function showStatus(message, type) {
-            status.className = 'status ' + type;
-            if (type === 'loading') {
-                status.innerHTML = '<div class="spinner"></div>' + message;
+            if (data.resultado_general) {
+                displayRiskReport(data);
             } else {
-                status.textContent = message;
+                displayLegacyResult(data);
             }
-            status.style.display = 'block';
         }
 
-        function hideStatus() {
-            status.style.display = 'none';
+        function displayRiskReport(data) {
+            const resultadoGeneral = data.resultado_general;
+            const estadisticas = data.estadisticas;
+            const riesgos = data.riesgos_detectados || [];
+            const aspectos = data.aspectos_seguros || [];
+            const recomendaciones = data.recomendaciones_urgentes || [];
+
+            if (!resultadoGeneral.es_imagen_obra) {
+                result.className = 'result error';
+                resultIcon.textContent = '❌';
+                resultTitle.textContent = 'No es imagen de obra';
+                resultContent.innerHTML = '<p>La imagen no parece ser de un sitio de construcción.</p>';
+                return;
+            }
+
+            let resultClass = 'result success';
+            let icon = '✅';
+            let title = resultadoGeneral.estado_seguridad;
+
+            if (resultadoGeneral.nivel_riesgo === 'CRITICO') {
+                resultClass = 'result error';
+                icon = '🔴';
+            } else if (resultadoGeneral.nivel_riesgo === 'ALTO') {
+                resultClass = 'result error';
+                icon = '🟠';
+            } else if (resultadoGeneral.nivel_riesgo === 'MEDIO') {
+                resultClass = 'result warning';
+                icon = '🟡';
+            } else {
+                resultClass = 'result success';
+                icon = '🟢';
+            }
+
+            result.className = resultClass;
+            resultIcon.textContent = icon;
+            resultTitle.textContent = title;
+
+            let contentHtml = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number">${estadisticas.total_riesgos}</span>
+                        <span class="stat-label">Total Riesgos</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${estadisticas.riesgos_criticos}</span>
+                        <span class="stat-label">Críticos</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${estadisticas.riesgos_altos}</span>
+                        <span class="stat-label">Altos</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${estadisticas.riesgos_medios}</span>
+                        <span class="stat-label">Medios</span>
+                    </div>
+                </div>
+            `;
+
+            if (riesgos.length > 0) {
+                contentHtml += '<div class="section-title">⚠️ Riesgos Detectados</div>';
+                riesgos.forEach(riesgo => {
+                    const gravedadClass = riesgo.gravedad.toLowerCase();
+                    contentHtml += `
+                        <div class="risk-item">
+                            <span class="risk-badge ${gravedadClass}">${riesgo.gravedad}</span>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px;">${riesgo.categoria}</div>
+                                <div style="font-size: 13px;">${riesgo.descripcion}</div>
+                                <div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">📍 ${riesgo.ubicacion}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (aspectos.length > 0) {
+                contentHtml += '<div class="section-title">✅ Aspectos Seguros</div>';
+                aspectos.forEach(aspecto => {
+                    contentHtml += `
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">✓</span>
+                            <span>${aspecto}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            if (recomendaciones.length > 0) {
+                contentHtml += '<div class="section-title">🔧 Recomendaciones Urgentes</div>';
+                contentHtml += '<div class="recommendations-list">';
+                recomendaciones.forEach((rec, index) => {
+                    contentHtml += `
+                        <div class="recommendation-item">
+                            <span>${index + 1}.</span>
+                            <span>${rec}</span>
+                        </div>
+                    `;
+                });
+                contentHtml += '</div>';
+            }
+
+            if (data.resumen_ejecutivo) {
+                contentHtml += `<div class="description-box">${data.resumen_ejecutivo}</div>`;
+            }
+
+            resultContent.innerHTML = contentHtml;
         }
 
-        function hideResult() {
+        function displayLegacyResult(data) {
+            const cumple = data.tiene_casco && data.tiene_chaleco;
+
+            if (cumple) {
+                result.className = 'result success';
+                resultIcon.textContent = '✅';
+                resultTitle.textContent = 'Cumple con Seguridad';
+                resultContent.innerHTML = `
+                    <div class="safety-items">
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🪖</span>
+                            <span>Casco de seguridad detectado</span>
+                        </div>
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🦺</span>
+                            <span>Chaleco reflectante detectado</span>
+                        </div>
+                    </div>
+                    <div class="description-box">"${data.descripcion}"</div>
+                `;
+            } else {
+                result.className = 'result warning';
+                resultIcon.textContent = '⚠️';
+                resultTitle.textContent = 'Equipo Incompleto';
+
+                let itemsHtml = '<div class="safety-items">';
+
+                if (data.tiene_casco) {
+                    itemsHtml += `
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🪖</span>
+                            <span>Casco de seguridad detectado</span>
+                        </div>`;
+                } else {
+                    itemsHtml += `
+                        <div class="safety-item missing">
+                            <span class="safety-item-icon">❌</span>
+                            <span>Falta casco de seguridad</span>
+                        </div>`;
+                }
+
+                if (data.tiene_chaleco) {
+                    itemsHtml += `
+                        <div class="safety-item ok">
+                            <span class="safety-item-icon">🦺</span>
+                            <span>Chaleco reflectante detectado</span>
+                        </div>`;
+                } else {
+                    itemsHtml += `
+                        <div class="safety-item missing">
+                            <span class="safety-item-icon">❌</span>
+                            <span>Falta chaleco reflectante</span>
+                        </div>`;
+                }
+
+                itemsHtml += '</div>';
+
+                resultContent.innerHTML = itemsHtml + `<div class="description-box">"${data.descripcion}"</div>`;
+            }
+        }
+
+        function showError(title, message) {
+            result.style.display = 'block';
+            result.className = 'result error';
+            resultIcon.textContent = '❌';
+            resultTitle.textContent = title;
+            resultContent.innerHTML = `<p>${message}</p>`;
+            loading.style.display = 'none';
+            btnAnalyze.style.display = 'block';
+        }
+
+        function resetForm() {
+            selectedFile = null;
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            btnAnalyze.style.display = 'none';
             result.style.display = 'none';
+            uploadArea.style.display = 'block';
         }
     </script>
 </body>
